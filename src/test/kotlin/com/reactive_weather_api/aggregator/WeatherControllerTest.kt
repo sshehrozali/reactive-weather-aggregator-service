@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 @DisplayName("WeatherControllerTest")
@@ -45,10 +46,12 @@ internal class WeatherControllerTest {
 
                     @Test
                     fun `then return 200 OK with weather report in response body`() {
-                        every { weatherService.buildWeatherReport() } returns WeatherReport(
-                            LOCATION,
-                            TEMPERATURE,
-                            CONDITION
+                        every { weatherService.buildWeatherReport() } returns Mono.just(
+                            WeatherReport(
+                                LOCATION,
+                                TEMPERATURE,
+                                CONDITION
+                            )
                         )
 
                         val result = subject.getWeatherReportV1(LOCATION)
