@@ -1,5 +1,8 @@
 package com.reactive_weather_api.aggregator
 
+import com.reactive_weather_api.aggregator.service.AsyncWeatherDataAggregator
+import com.reactive_weather_api.aggregator.service.AsyncWeatherDataFetcher
+import com.reactive_weather_api.aggregator.service.WeatherService
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

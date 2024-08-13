@@ -1,6 +1,7 @@
 package com.reactive_weather_api.aggregator
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.reactive_weather_api.aggregator.model.GetWeatherReportV1ResponseDTO
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,9 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
-import reactor.kotlin.core.publisher.toMono
-import reactor.kotlin.test.test
-import reactor.test.StepVerifier
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 

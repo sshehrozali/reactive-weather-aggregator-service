@@ -1,4 +1,4 @@
-package com.reactive_weather_api.aggregator
+package com.reactive_weather_api.aggregator.model
 
 data class WeatherReport(
     val location: String,

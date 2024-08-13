@@ -1,5 +1,6 @@
-package com.reactive_weather_api.aggregator
+package com.reactive_weather_api.aggregator.service
 
+import com.reactive_weather_api.aggregator.model.WeatherReport
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 

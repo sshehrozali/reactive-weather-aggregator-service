@@ -1,5 +1,9 @@
 package com.reactive_weather_api.aggregator
 
+import com.reactive_weather_api.aggregator.controller.WeatherController
+import com.reactive_weather_api.aggregator.exception.ErrorGeneratingWeatherReport
+import com.reactive_weather_api.aggregator.model.WeatherReport
+import com.reactive_weather_api.aggregator.service.WeatherService
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
