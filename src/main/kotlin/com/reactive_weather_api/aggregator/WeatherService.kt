@@ -4,4 +4,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class WeatherService {
+
+    fun buildWeatherReport(): WeatherReport {
+        TODO()
+    }
 }

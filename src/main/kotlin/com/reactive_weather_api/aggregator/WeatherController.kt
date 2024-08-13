@@ -14,7 +14,9 @@ class WeatherController(
 ) {
 
     @GetMapping("/weather/report")
-    fun getWeatherReportV1(@RequestParam location: String): ResponseEntity<Mono<GetWeatherReportV1ResponseDTO>> {
-        return ResponseEntity.ok(Mono.just(GetWeatherReportV1ResponseDTO(location, "34", "")))
+    fun getWeatherReportV1(@RequestParam location: String): Mono<ResponseEntity<GetWeatherReportV1ResponseDTO>> {
+        return Mono.just(
+            ResponseEntity.ok(GetWeatherReportV1ResponseDTO(location, "34", "Sunny"))
+        )
     }
 }
