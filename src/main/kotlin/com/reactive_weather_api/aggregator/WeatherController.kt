@@ -9,7 +9,9 @@ import reactor.core.publisher.Mono
 
 @RequestMapping("api/v1")
 @RestController
-class WeatherController {
+class WeatherController(
+    private val weatherService: WeatherService
+) {
 
     @GetMapping("/weather/report")
     fun getWeatherReportV1(@RequestParam location: String): ResponseEntity<Mono<GetWeatherReportV1ResponseDTO>> {
