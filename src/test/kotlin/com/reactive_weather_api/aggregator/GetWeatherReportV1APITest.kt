@@ -1,5 +1,6 @@
 package com.reactive_weather_api.aggregator
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,35 +10,38 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
+import reactor.test.StepVerifier
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @DisplayName("GET v1/weather/report API test")
 class GetWeatherReportV1APITest(
-    @Autowired private val webTestClient: WebTestClient
+    @Autowired private val webTestClient: WebTestClient,
+    @Autowired private val objectMapper: ObjectMapper
 ) {
 
-    private val location = "New Yrk"
+    private val location = "New York"
+    private val temperature = "34"
 
     @Test
     fun `should return weather report for a city requested by user`() {
         val response = webTestClient
             .get()
-            .uri("v1/weather/report?location=$location")
+            .uri("/api/v1/weather/report?location=$location")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBody(GetWeatherReportV1ResponseDTO::class.java)
+            .expectBody(String::class.java)
             .returnResult()
             .responseBody
-            .toMono()
 
-        response.test()
-            .consumeNextWith { dto ->
-                assertEquals(location, dto.location)
-            }
+        val successResponseDTO = objectMapper.readValue(response, GetWeatherReportV1ResponseDTO::class.java)
 
+        assertNotNull(successResponseDTO)
+        assertEquals(location, successResponseDTO.location)
+        assertEquals(temperature, successResponseDTO.temperature)
     }
 
 }
