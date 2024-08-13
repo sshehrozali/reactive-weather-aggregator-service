@@ -18,7 +18,7 @@ class GetWeatherReportV1APITest(
     @Autowired private val webTestClient: WebTestClient
 ) {
 
-    private val location = "New York"
+    private val location = "New Yrk"
 
     @Test
     fun `should return weather report for a city requested by user`() {
