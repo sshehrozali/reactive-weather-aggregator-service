@@ -37,7 +37,7 @@ internal class WeatherServiceTest {
 
         @Nested
         @DisplayName("Call AsyncWeatherDataFetcher")
-        inner class CallAsyncWeatherDataFetcher {
+        inner class CallAsyncWeatherDataFetcherTest {
 
             @Nested
             @DisplayName("if data is fetched and received")

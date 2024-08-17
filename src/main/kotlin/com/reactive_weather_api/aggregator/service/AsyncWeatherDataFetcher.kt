@@ -7,5 +7,7 @@ class AsyncWeatherDataFetcher {
 
     fun fetchWeatherData() {
 
+        // call Geocoding API to fetch lat, long
+        // call WeatherAPI using lat, long to fetch data
     }
 }
