@@ -1,5 +1,7 @@
 package com.reactive_weather_api.aggregator
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.convertValue
 import com.reactive_weather_api.aggregator.exception.OpenWeatherRestClientException
 import com.reactive_weather_api.aggregator.model.DirectGeocodingData
 import com.reactive_weather_api.aggregator.model.GetDirectGeocodingResponseDTO
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
@@ -25,6 +28,11 @@ class OpenWeatherRestClient(
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError) { response ->
+                response.bodyToMono<String>().flatMap {
+                    Mono.error(OpenWeatherRestClientException())
+                }
+            }
+            .onStatus(HttpStatusCode::is5xxServerError) { response ->
                 response.bodyToMono<String>().flatMap {
                     Mono.error(OpenWeatherRestClientException())
                 }

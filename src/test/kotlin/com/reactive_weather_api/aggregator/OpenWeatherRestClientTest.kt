@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -33,6 +34,7 @@ internal class OpenWeatherRestClientTest {
     private val CITY_LONGITUDE = -0.1276474
 
     private val webClient = mockk<WebClient>()
+    private val responseSpec = mockk<ResponseSpec>()
 
     private val subject = OpenWeatherRestClient(webClient, API_KEY, DIRECT_GEOCODING_API_URL)
 
@@ -50,33 +52,32 @@ internal class OpenWeatherRestClientTest {
 
                 @Test
                 fun `then transform response into DirectGeocodingData and return it`() {
-                    val mockGetDirectGeocodingResponseData =
-                        Mono.just(listOf(GetDirectGeocodingResponseDTO(CITY_LATITUDE, CITY_LONGITUDE)))
+                    val mockResponse = "[{\"lat\":51.5074,\"lon\":-0.1278}]"
 
+                    val mockRequestSpec = mockk<WebClient.RequestHeadersUriSpec<*>>()
+                    val mockResponseSpec = mockk<WebClient.ResponseSpec>()
+
+                    every { webClient.get() } returns mockRequestSpec
                     every {
-                        webClient.get()
-                            .uri(DIRECT_GEOCODING_API_URL.format(CITY, API_KEY))
-                            .accept(MediaType.APPLICATION_JSON)
-                            .retrieve()
-                            .bodyToMono<List<GetDirectGeocodingResponseDTO>>()
-                    } returns mockGetDirectGeocodingResponseData
+                        mockRequestSpec.uri(
+                            DIRECT_GEOCODING_API_URL.format(
+                                CITY,
+                                API_KEY
+                            )
+                        )
+                    } returns mockRequestSpec
+                    every { mockRequestSpec.accept(MediaType.APPLICATION_JSON) } returns mockRequestSpec
+                    every { mockRequestSpec.retrieve() } returns mockResponseSpec
+                    every { mockResponseSpec.onStatus(any(), any()) } returns mockResponseSpec
+                    every { mockResponseSpec.bodyToMono<String>() } returns Mono.just(mockResponse)
 
-                    val result = subject.getDirectGeocodingByCityName(CITY)
+                    val result = subject.getDirectGeocodingByCityName(CITY).block()
 
-                    StepVerifier.create(result)
-                        .consumeNextWith { it ->
-                            assertEquals(CITY_LATITUDE, it.latitude)
-                            assertEquals(CITY_LONGITUDE, it.longitude)
-                        }
-                        .verifyComplete()
+                    assertNotNull(result)
+                    assertEquals(51.5074, result?.latitude)
+                    assertEquals(-0.1278, result?.longitude)
 
-                    verify(exactly = 1) {
-                        webClient.get()
-                            .uri(DIRECT_GEOCODING_API_URL.format(CITY, API_KEY))
-                            .accept(MediaType.APPLICATION_JSON)
-                            .retrieve()
-                            .bodyToMono<List<GetDirectGeocodingResponseDTO>>()
-                    }
+                    verify { mockResponseSpec.bodyToMono<String>() }
                 }
             }
 
