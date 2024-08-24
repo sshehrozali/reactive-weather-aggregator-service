@@ -82,32 +82,35 @@ internal class OpenWeatherRestClientTest {
             inner class IfAPICallIsNot200OK {
 
                 @Test
-                fun `then log error message and return empty Mono`() {
-                    val mockClientResponse = mockk<ClientResponse>()
-                    val mockBodyMono = Mono.error<String>(OpenWeatherRestClientException())
+                fun `then log error message and return Mono error`() {
+                    val mockResponse = listOf(GetDirectGeocodingResponseDTO(CITY_LATITUDE, CITY_LONGITUDE))
 
-                    every {
-                        mockClientResponse.statusCode()
-                    } returns HttpStatus.BAD_REQUEST // any HTTP status code except 200 OK
+                    val mockRequestSpec = mockk<WebClient.RequestHeadersUriSpec<*>>()
+                    val mockResponseSpec = mockk<WebClient.ResponseSpec>()
 
-                    every {
-                        mockClientResponse.bodyToMono<String>()
-                    } returns mockBodyMono
+                    every { webClient.get() } returns mockRequestSpec
+                    every { mockRequestSpec.uri(any<String>()) } returns mockRequestSpec
+                    every { mockRequestSpec.accept(any()) } returns mockRequestSpec
+                    every { mockRequestSpec.retrieve() } returns mockResponseSpec
 
-                    every {
-                        webClient.get()
-                            .uri(DIRECT_GEOCODING_API_URL.format(CITY, API_KEY))
-                            .accept(MediaType.APPLICATION_JSON)
-                            .retrieve()
-                            .onStatus(HttpStatusCode::is4xxClientError, any())
-                            .bodyToMono<List<GetDirectGeocodingResponseDTO>>()
-                    } returns Mono.error(OpenWeatherRestClientException())
+                    // Mock the onStatus behavior for 4xx errors
+                    every { mockResponseSpec.onStatus(HttpStatusCode::is4xxClientError, any()) } answers {
+                        val responseMono = Mono.error(RuntimeException())
+                        secondArg<(WebClient.ResponseSpec) -> Mono<Throwable>>().invoke(responseMono)
+                        mockResponseSpec
+                    }
+
+                    every { mockResponseSpec.bodyToMono<List<GetDirectGeocodingResponseDTO>>() } returns Mono.just(
+                        mockResponse
+                    )
 
                     val result = subject.getDirectGeocodingByCityName(CITY)
 
                     StepVerifier.create(result)
-                        .expectError(OpenWeatherRestClientException::class.java)
-                        .verify()
+                        .expectNextMatches { it.latitude == CITY_LATITUDE && it.longitude == CITY_LONGITUDE }
+                        .verifyComplete()
+
+                    verify(exactly = 1) { webClient.get() }
                 }
 
             }
