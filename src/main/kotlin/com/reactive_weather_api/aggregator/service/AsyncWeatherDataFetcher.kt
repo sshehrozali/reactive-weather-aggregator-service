@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 @Component
 class AsyncWeatherDataFetcher {
 
-    fun fetchWeatherData() {
+    fun fetchFromOpenWeather(city: String) {
 
         // call Geocoding API to fetch lat, long
         // call WeatherAPI using lat, long to fetch data
