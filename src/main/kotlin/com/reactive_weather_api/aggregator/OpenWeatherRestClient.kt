@@ -3,6 +3,7 @@ package com.reactive_weather_api.aggregator
 import com.reactive_weather_api.aggregator.exception.OpenWeatherRestClientException
 import com.reactive_weather_api.aggregator.model.DirectGeocodingData
 import com.reactive_weather_api.aggregator.model.GetDirectGeocodingResponseDTO
+import com.reactive_weather_api.aggregator.model.WeatherResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
@@ -16,7 +17,8 @@ import reactor.core.publisher.Mono
 class OpenWeatherRestClient(
     private val webClient: WebClient,
     @Value("\${external.open-weather.api-key}") private val apiKey: String,
-    @Value("\${external.open-weather.direct-geocoding-api-url}") private val directGeocodingApiUrl: String
+    @Value("\${external.open-weather.direct-geocoding-api-url}") private val directGeocodingApiUrl: String,
+    @Value("\${external.open-weather.weather-forecast-api-url}") private val weatherForecastApiUrl: String
 ) {
 
     private val log = LoggerFactory.getLogger(OpenWeatherRestClient::class.java)
@@ -42,10 +44,26 @@ class OpenWeatherRestClient(
             .flatMap { response ->
                 Mono.just(DirectGeocodingData(response.first().lat, response.first().lon))
             }
-
     }
 
-    fun getWeatherData(latitude: String, longitude: String): String {
-        TODO()
+    fun getWeatherData(latitude: Double, longitude: Double) {
+        return webClient.get()
+            .uri(weatherForecastApiUrl.format(latitude, longitude, "current,minutely,daily,alerts", apiKey))
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError) { response ->
+                response.bodyToMono<String>().flatMap { it ->
+                    log.error("Error HTTP 4xx while calling GeocodingAPI: $it")
+                    Mono.error(OpenWeatherRestClientException())
+                }
+            }
+            .onStatus(HttpStatusCode::is5xxServerError) { response ->
+                response.bodyToMono<String>().flatMap {
+                    log.error("Error HTTP 5xx while calling GeocodingAPI: $it")
+                    Mono.error(OpenWeatherRestClientException())
+                }
+            }
+            .bodyToMono<WeatherResponse>()
+
     }
 }

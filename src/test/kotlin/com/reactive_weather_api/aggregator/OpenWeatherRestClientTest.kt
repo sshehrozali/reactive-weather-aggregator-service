@@ -34,11 +34,11 @@ internal class OpenWeatherRestClientTest {
 
         @Nested
         @DisplayName("call GeocodingAPI to fetch city name")
-        inner class CallGeocodingAPIToFetchCityName {
+        inner class CallGeocodingApiToFetchCityName {
 
             @Nested
             @DisplayName("when response is retrieved")
-            inner class IfAPICallIs200OK {
+            inner class WhenResponseIsRetrieved {
 
                 @Test
                 fun `then transform response into DirectGeocodingData and return it`() {
@@ -74,10 +74,41 @@ internal class OpenWeatherRestClientTest {
     @DisplayName("getWeatherData")
     inner class GetWeatherData {
 
-        // call WeatherAPI to fetch data
-        // if API call is 200 OK
-        // then extract fields from response, populate Mono<T> and return it
-        // if API call is not 200 OK
-        // then log error message and return empty Mono<T>
+        @Nested
+        @DisplayName("call WeatherAPI to fetch weather data based on city geo coordinates")
+        inner class CallWeatherApiToFetchWeatherDataBasedOnCity {
+
+            @Nested
+            @DisplayName("when response is retrieved")
+            inner class WhenResponseIsRetrieved {
+
+                @Test
+                fun `then transform response into DirectGeocodingData and return it`() {
+                    val mockResponse = listOf(GetDirectGeocodingResponseDTO(CITY_LATITUDE, CITY_LONGITUDE))
+
+                    val mockRequestSpec = mockk<WebClient.RequestHeadersUriSpec<*>>()
+                    val mockResponseSpec = mockk<WebClient.ResponseSpec>()
+
+                    every { webClient.get() } returns mockRequestSpec
+                    every { mockRequestSpec.uri(any<String>()) } returns mockRequestSpec
+                    every { mockRequestSpec.accept(any()) } returns mockRequestSpec
+                    every { mockRequestSpec.retrieve() } returns mockResponseSpec
+
+                    every { mockResponseSpec.onStatus(any(), any()) } returns mockResponseSpec
+
+                    every { mockResponseSpec.bodyToMono<List<GetDirectGeocodingResponseDTO>>() } returns Mono.just(
+                        mockResponse
+                    )
+
+                    val result = subject.getDirectGeocodingByCityName(CITY)
+
+                    StepVerifier.create(result)
+                        .expectNextMatches { it.latitude == CITY_LATITUDE && it.longitude == CITY_LONGITUDE }
+                        .verifyComplete()
+
+                    verify(exactly = 1) { webClient.get() }
+                }
+            }
+        }
     }
 }

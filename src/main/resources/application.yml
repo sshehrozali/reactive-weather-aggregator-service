@@ -10,4 +10,5 @@ external:
   open-weather:
     api-key: 6030d2ca55960eebddc5f5768b9f4f77
     direct-geocoding-api-url: "http://api.openweathermap.org/geo/1.0/direct?q=%S&appid=%S"
+    weather-forecast-api-url: "https://api.openweathermap.org/data/3.0/onecall?lat=%S&lon=%S&exclude=%S&appid=%S"
 
