@@ -1,12 +1,5 @@
 package com.reactive_weather_api.aggregator.model
 
-data class Weather(
-    val id: Int,
-    val main: String,
-    val description: String,
-    val icon: String
-)
-
 data class HourlyWeather(
     val dt: Long,
     val temp: Double,
@@ -20,7 +13,7 @@ data class HourlyWeather(
     val wind_speed: Double,
     val wind_deg: Int,
     val wind_gust: Double,
-    val weather: List<Weather>,
+    val weather: List<WeatherDTO>,
     val pop: Double
 )
 
