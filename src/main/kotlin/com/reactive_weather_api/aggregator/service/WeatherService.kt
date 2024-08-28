@@ -11,8 +11,8 @@ class WeatherService(
 ) {
 
     fun buildWeatherReport(): Mono<WeatherReport> {
-        asyncWeatherDataFetcher.fetchWeatherData()
-        asyncWeatherDataAggregator.aggregateWeatherData()
+//        asyncWeatherDataFetcher.fetchWeatherData()
+//        asyncWeatherDataAggregator.aggregateWeatherData()
 
         return Mono.just(WeatherReport("New York", "34", "Sunny"))
     }

@@ -20,13 +20,15 @@ internal class OpenWeatherRestClientTest {
 
     private val CITY = "London"
     private val DIRECT_GEOCODING_API_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%S&appid=%S"
+    private val WEATHER_FORECAST_API_URL =
+        "https://api.openweathermap.org/data/3.0/onecall?lat=%S&lon=%S&exclude=%S&appid=%S"
     private val API_KEY = "API_KEY"
     private val CITY_LATITUDE = 51.5073219
     private val CITY_LONGITUDE = -0.1276474
 
     private val webClient = mockk<WebClient>()
 
-    private val subject = OpenWeatherRestClient(webClient, API_KEY, DIRECT_GEOCODING_API_URL)
+    private val subject = OpenWeatherRestClient(webClient, API_KEY, DIRECT_GEOCODING_API_URL, WEATHER_FORECAST_API_URL)
 
     @Nested
     @DisplayName("getDirectGeocodingByCityName")
@@ -61,7 +63,7 @@ internal class OpenWeatherRestClientTest {
                     val result = subject.getDirectGeocodingByCityName(CITY)
 
                     StepVerifier.create(result)
-                        .expectNextMatches { it.latitude == CITY_LATITUDE && it.longitude == CITY_LONGITUDE }
+                        .expectNextMatches { it.first().lat == CITY_LATITUDE && it.first().lon == CITY_LONGITUDE }
                         .verifyComplete()
 
                     verify(exactly = 1) { webClient.get() }
@@ -103,7 +105,7 @@ internal class OpenWeatherRestClientTest {
                     val result = subject.getDirectGeocodingByCityName(CITY)
 
                     StepVerifier.create(result)
-                        .expectNextMatches { it.latitude == CITY_LATITUDE && it.longitude == CITY_LONGITUDE }
+                        .expectNextMatches { it.first().lat == CITY_LATITUDE && it.first().lon == CITY_LONGITUDE }
                         .verifyComplete()
 
                     verify(exactly = 1) { webClient.get() }

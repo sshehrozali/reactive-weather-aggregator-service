@@ -1,9 +1,8 @@
 package com.reactive_weather_api.aggregator
 
 import com.reactive_weather_api.aggregator.exception.OpenWeatherRestClientException
-import com.reactive_weather_api.aggregator.model.DirectGeocodingData
 import com.reactive_weather_api.aggregator.model.GetDirectGeocodingResponseDTO
-import com.reactive_weather_api.aggregator.model.WeatherResponse
+import com.reactive_weather_api.aggregator.model.GetWeatherReportResponseDTO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
@@ -23,7 +22,7 @@ class OpenWeatherRestClient(
 
     private val log = LoggerFactory.getLogger(OpenWeatherRestClient::class.java)
 
-    fun getDirectGeocodingByCityName(city: String): Mono<DirectGeocodingData> {
+    fun getDirectGeocodingByCityName(city: String): Mono<List<GetDirectGeocodingResponseDTO>> {
         return webClient.get()
             .uri(directGeocodingApiUrl.format(city, apiKey))
             .accept(MediaType.APPLICATION_JSON)
@@ -41,12 +40,10 @@ class OpenWeatherRestClient(
                 }
             }
             .bodyToMono<List<GetDirectGeocodingResponseDTO>>()
-            .flatMap { response ->
-                Mono.just(DirectGeocodingData(response.first().lat, response.first().lon))
-            }
+            .flatMap { Mono.just(it) }
     }
 
-    fun getWeatherData(latitude: Double, longitude: Double) {
+    fun getWeatherData(latitude: Double, longitude: Double): Mono<GetWeatherReportResponseDTO> {
         return webClient.get()
             .uri(weatherForecastApiUrl.format(latitude, longitude, "current,minutely,daily,alerts", apiKey))
             .accept(MediaType.APPLICATION_JSON)
@@ -63,7 +60,7 @@ class OpenWeatherRestClient(
                     Mono.error(OpenWeatherRestClientException())
                 }
             }
-            .bodyToMono<WeatherResponse>()
-
+            .bodyToMono<GetWeatherReportResponseDTO>()
+            .flatMap { Mono.just(it) }
     }
 }

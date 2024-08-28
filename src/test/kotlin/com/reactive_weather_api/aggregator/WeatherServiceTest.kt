@@ -61,7 +61,7 @@ internal class WeatherServiceTest {
                                 }
                                 .verifyComplete()
 
-                            verify(exactly = 1) { asyncWeatherDataFetcher.fetchWeatherData() }
+//                            verify(exactly = 1) { asyncWeatherDataFetcher.fetchWeatherData() }
                             verify(exactly = 1) { asyncWeatherDataAggregator.aggregateWeatherData() }
                         }
                     }

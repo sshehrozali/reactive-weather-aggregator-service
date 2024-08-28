@@ -1,6 +1,6 @@
 package com.reactive_weather_api.aggregator
 
-import com.reactive_weather_api.aggregator.model.DirectGeocodingData
+import com.reactive_weather_api.aggregator.model.GetDirectGeocodingResponseDTO
 import com.reactive_weather_api.aggregator.service.AsyncWeatherDataFetcher
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -24,21 +24,21 @@ internal class AsyncWeatherDataFetcherTest {
     private lateinit var subject: AsyncWeatherDataFetcher
 
     private val CITY = "London"
-    private val directGeocodingData = DirectGeocodingData(51.5073219, -0.1276474)
+    private val mockGetDirectGeocodingResponseDto = GetDirectGeocodingResponseDTO(51.5073219, -0.1276474)
 
     @Nested
     @DisplayName("fetchFromOpenWeather")
     inner class FetchFromOpenWeather {
 
         // use OpenWeatherRestClient to fetch location coordinates based on city
-            // if fetched successfully
-                // then use OpenWeatherRestClient to fetch weather data based on location coordinates
-                    // if fetched successfully
-                        // then build data and return it
-                    // if exception is thrown
-                        // catch exception, return empty data
-            // if exception is thrown
-                // catch exception, return empty data
+        // if fetched successfully
+        // then use OpenWeatherRestClient to fetch weather data based on location coordinates
+        // if fetched successfully
+        // then build data and return it
+        // if exception is thrown
+        // catch exception, return empty data
+        // if exception is thrown
+        // catch exception, return empty data
 
 
         @Nested
@@ -59,7 +59,11 @@ internal class AsyncWeatherDataFetcherTest {
 
                         @Test
                         fun `then build data and return it`() {
-                            every { openWeatherRestClient.getDirectGeocodingByCityName(CITY) } returns Mono.just(directGeocodingData)
+                            every { openWeatherRestClient.getDirectGeocodingByCityName(CITY) } returns Mono.just(
+                                listOf(
+                                    mockGetDirectGeocodingResponseDto
+                                )
+                            )
 
                             subject.fetchFromOpenWeather(CITY)
 
