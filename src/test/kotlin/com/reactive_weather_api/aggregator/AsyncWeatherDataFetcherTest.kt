@@ -1,6 +1,6 @@
 package com.reactive_weather_api.aggregator
 
-import com.reactive_weather_api.aggregator.model.GetDirectGeocodingResponseDTO
+import com.reactive_weather_api.aggregator.api.openweather.geocoding.model.GetDirectGeocodingResponseDTO
 import com.reactive_weather_api.aggregator.service.AsyncWeatherDataFetcher
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -42,16 +42,16 @@ internal class AsyncWeatherDataFetcherTest {
 
 
         @Nested
-        @DisplayName("use OpenWeatherRestClient to fetch location coordinates based on city")
-        inner class UseOpenWeatherRestClientToFetchLocationCoordinatesBasedOnCity {
+        @DisplayName("retrieve geo coordinates based on city")
+        inner class RetrieveGeoCoordinatesBasedOnCity {
 
             @Nested
             @DisplayName("if fetched successfully")
             inner class IfFetchedSuccessfully {
 
                 @Nested
-                @DisplayName("then use OpenWeatherRestClient to fetch weather data based on location coordinates")
-                inner class ThenUseOpenWeatherRestClientToFetchWeatherDataBasedOnLocationCoordinates {
+                @DisplayName("then retrieve weather data")
+                inner class ThenRetrieveWeatherData {
 
                     @Nested
                     @DisplayName("if fetched successfully")
@@ -68,6 +68,12 @@ internal class AsyncWeatherDataFetcherTest {
                             subject.fetchFromOpenWeather(CITY)
 
                             verify(exactly = 1) { openWeatherRestClient.getDirectGeocodingByCityName(CITY) }
+                            verify(exactly = 1) {
+                                openWeatherRestClient.getWeatherData(
+                                    mockGetDirectGeocodingResponseDto.lat,
+                                    mockGetDirectGeocodingResponseDto.lon
+                                )
+                            }
                         }
                     }
 

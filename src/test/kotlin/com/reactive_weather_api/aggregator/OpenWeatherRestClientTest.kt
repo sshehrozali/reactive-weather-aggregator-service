@@ -1,6 +1,6 @@
 package com.reactive_weather_api.aggregator
 
-import com.reactive_weather_api.aggregator.model.GetDirectGeocodingResponseDTO
+import com.reactive_weather_api.aggregator.api.openweather.geocoding.model.GetDirectGeocodingResponseDTO
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk

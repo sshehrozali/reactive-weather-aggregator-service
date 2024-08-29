@@ -1,8 +1,7 @@
 package com.reactive_weather_api.aggregator
 
 import com.reactive_weather_api.aggregator.exception.OpenWeatherRestClientException
-import com.reactive_weather_api.aggregator.model.GetDirectGeocodingResponseDTO
-import com.reactive_weather_api.aggregator.model.GetWeatherReportResponseDTO
+import com.reactive_weather_api.aggregator.api.openweather.geocoding.model.GetDirectGeocodingResponseDTO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode

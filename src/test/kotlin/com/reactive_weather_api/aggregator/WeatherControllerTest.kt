@@ -2,7 +2,7 @@ package com.reactive_weather_api.aggregator
 
 import com.reactive_weather_api.aggregator.controller.WeatherController
 import com.reactive_weather_api.aggregator.exception.ErrorGeneratingWeatherReport
-import com.reactive_weather_api.aggregator.model.WeatherReport
+import com.reactive_weather_api.aggregator.model.WeatherReportDTO
 import com.reactive_weather_api.aggregator.service.WeatherService
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -34,7 +34,7 @@ internal class WeatherControllerTest {
 
     @Nested
     @DisplayName("getWeatherReportV1")
-    inner class GetWeatherReportV1 {
+    inner class GetWeatherReportDTOV1 {
 
         @Nested
         @DisplayName("when given valid location")
@@ -51,7 +51,7 @@ internal class WeatherControllerTest {
                     @Test
                     fun `then return 200 OK with weather report in response body`() {
                         every { weatherService.buildWeatherReport() } returns Mono.just(
-                            WeatherReport(
+                            WeatherReportDTO(
                                 LOCATION,
                                 TEMPERATURE,
                                 CONDITION

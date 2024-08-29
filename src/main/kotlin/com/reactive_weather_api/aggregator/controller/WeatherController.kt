@@ -1,6 +1,5 @@
 package com.reactive_weather_api.aggregator.controller
 
-import com.reactive_weather_api.aggregator.model.GetWeatherReportResponseDTO
 import com.reactive_weather_api.aggregator.service.WeatherService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

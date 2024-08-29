@@ -1,6 +1,6 @@
 package com.reactive_weather_api.aggregator.service
 
-import com.reactive_weather_api.aggregator.model.WeatherReport
+import com.reactive_weather_api.aggregator.model.WeatherReportDTO
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -10,10 +10,10 @@ class WeatherService(
     private val asyncWeatherDataAggregator: AsyncWeatherDataAggregator
 ) {
 
-    fun buildWeatherReport(): Mono<WeatherReport> {
+    fun buildWeatherReport(): Mono<WeatherReportDTO> {
 //        asyncWeatherDataFetcher.fetchWeatherData()
 //        asyncWeatherDataAggregator.aggregateWeatherData()
 
-        return Mono.just(WeatherReport("New York", "34", "Sunny"))
+        return Mono.just(WeatherReportDTO("New York", "34", "Sunny"))
     }
 }

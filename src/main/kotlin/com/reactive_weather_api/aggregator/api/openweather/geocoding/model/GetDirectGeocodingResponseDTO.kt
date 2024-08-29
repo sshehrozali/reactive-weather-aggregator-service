@@ -1,4 +1,4 @@
-package com.reactive_weather_api.aggregator.model
+package com.reactive_weather_api.aggregator.api.openweather.geocoding.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

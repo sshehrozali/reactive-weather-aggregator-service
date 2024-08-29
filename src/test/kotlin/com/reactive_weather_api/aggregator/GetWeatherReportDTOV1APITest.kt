@@ -1,7 +1,6 @@
 package com.reactive_weather_api.aggregator
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.reactive_weather_api.aggregator.model.GetWeatherReportResponseDTO
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +14,7 @@ import kotlin.test.assertNotNull
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @DisplayName("GET v1/weather/report API test")
-class GetWeatherReportV1APITest(
+class GetWeatherReportDTOV1APITest(
     @Autowired private val webTestClient: WebTestClient,
     @Autowired private val objectMapper: ObjectMapper
 ) {

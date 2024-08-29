@@ -33,7 +33,7 @@ internal class WeatherServiceTest {
 
     @Nested
     @DisplayName("buildWeatherReport")
-    inner class BuildWeatherReport {
+    inner class BuildWeatherReportDTO {
 
         @Nested
         @DisplayName("Call AsyncWeatherDataFetcher")
