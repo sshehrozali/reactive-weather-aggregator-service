@@ -1,6 +1,7 @@
 package com.reactive_weather_api.aggregator
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.reactive_weather_api.aggregator.model.WeatherReportDTO
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +35,7 @@ class GetWeatherReportDTOV1APITest(
             .returnResult()
             .responseBody
 
-        val successResponseDTO = objectMapper.readValue(response, GetWeatherReportResponseDTO::class.java)
+        val successResponseDTO = objectMapper.readValue(response, WeatherReportDTO::class.java)
 
         assertNotNull(successResponseDTO)
         assertEquals(location, successResponseDTO.location)
