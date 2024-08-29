@@ -1,5 +1,6 @@
 package com.reactive_weather_api.aggregator.controller
 
+import com.reactive_weather_api.aggregator.model.WeatherReportDTO
 import com.reactive_weather_api.aggregator.service.WeatherService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,9 +16,9 @@ class WeatherController(
 ) {
 
     @GetMapping("/weather/report")
-    fun getWeatherReportV1(@RequestParam location: String): Mono<ResponseEntity<GetWeatherReportResponseDTO>> {
+    fun getWeatherReportV1(@RequestParam location: String): Mono<ResponseEntity<WeatherReportDTO>> {
         return Mono.just(
-            ResponseEntity.ok(GetWeatherReportResponseDTO(location, "34", "Sunny"))
+            ResponseEntity.ok(WeatherReportDTO(location, "34", "Sunny"))
         )
     }
 }

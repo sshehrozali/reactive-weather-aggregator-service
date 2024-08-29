@@ -1,5 +1,6 @@
 package com.reactive_weather_api.aggregator
 
+import com.reactive_weather_api.aggregator.api.openweather.forecast.model.GetWeatherForecastResponseDTO
 import com.reactive_weather_api.aggregator.exception.OpenWeatherRestClientException
 import com.reactive_weather_api.aggregator.api.openweather.geocoding.model.GetDirectGeocodingResponseDTO
 import org.slf4j.LoggerFactory
@@ -42,7 +43,7 @@ class OpenWeatherRestClient(
             .flatMap { Mono.just(it) }
     }
 
-    fun getWeatherData(latitude: Double, longitude: Double): Mono<GetWeatherReportResponseDTO> {
+    fun getWeatherData(latitude: Double, longitude: Double): Mono<GetWeatherForecastResponseDTO> {
         return webClient.get()
             .uri(weatherForecastApiUrl.format(latitude, longitude, "current,minutely,daily,alerts", apiKey))
             .accept(MediaType.APPLICATION_JSON)
@@ -59,7 +60,7 @@ class OpenWeatherRestClient(
                     Mono.error(OpenWeatherRestClientException())
                 }
             }
-            .bodyToMono<GetWeatherReportResponseDTO>()
+            .bodyToMono<GetWeatherForecastResponseDTO>()
             .flatMap { Mono.just(it) }
     }
 }
