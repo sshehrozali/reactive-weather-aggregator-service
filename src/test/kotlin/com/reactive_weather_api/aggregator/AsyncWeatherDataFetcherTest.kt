@@ -1,5 +1,8 @@
 package com.reactive_weather_api.aggregator
 
+import com.reactive_weather_api.aggregator.api.openweather.forecast.model.GetWeatherForecastResponseDTO
+import com.reactive_weather_api.aggregator.api.openweather.forecast.model.HourlyForecastDTO
+import com.reactive_weather_api.aggregator.api.openweather.forecast.model.WeatherDTO
 import com.reactive_weather_api.aggregator.api.openweather.geocoding.model.GetDirectGeocodingResponseDTO
 import com.reactive_weather_api.aggregator.service.AsyncWeatherDataFetcher
 import io.mockk.every
@@ -24,22 +27,32 @@ internal class AsyncWeatherDataFetcherTest {
     private lateinit var subject: AsyncWeatherDataFetcher
 
     private val CITY = "London"
-    private val mockGetDirectGeocodingResponseDto = GetDirectGeocodingResponseDTO(51.5073219, -0.1276474)
+    private val mockGetDirectGeocodingResponseDTO = GetDirectGeocodingResponseDTO(51.5073219, -0.1276474)
+    private val mockGetWeatherForecastResponseDTO = GetWeatherForecastResponseDTO(
+        listOf(
+            HourlyForecastDTO(
+                23112,
+                34.5,
+                34.4,
+                5,
+                6,
+                45.5,
+                4.4,
+                6,
+                4,
+                343.2,
+                34,
+                343.4,
+                listOf(
+                    WeatherDTO(1, "Sunny", "Sunny", "231&asd")
+                ), 23.2
+            )
+        )
+    )
 
     @Nested
     @DisplayName("fetchFromOpenWeather")
     inner class FetchFromOpenWeather {
-
-        // use OpenWeatherRestClient to fetch location coordinates based on city
-        // if fetched successfully
-        // then use OpenWeatherRestClient to fetch weather data based on location coordinates
-        // if fetched successfully
-        // then build data and return it
-        // if exception is thrown
-        // catch exception, return empty data
-        // if exception is thrown
-        // catch exception, return empty data
-
 
         @Nested
         @DisplayName("retrieve geo coordinates based on city")
@@ -61,17 +74,23 @@ internal class AsyncWeatherDataFetcherTest {
                         fun `then build data and return it`() {
                             every { openWeatherRestClient.getDirectGeocodingByCityName(CITY) } returns Mono.just(
                                 listOf(
-                                    mockGetDirectGeocodingResponseDto
+                                    mockGetDirectGeocodingResponseDTO
                                 )
                             )
+                            every {
+                                openWeatherRestClient.getWeatherData(
+                                    mockGetDirectGeocodingResponseDTO.lat,
+                                    mockGetDirectGeocodingResponseDTO.lon
+                                )
+                            } returns Mono.just(mockGetWeatherForecastResponseDTO)
 
                             subject.fetchFromOpenWeather(CITY)
 
                             verify(exactly = 1) { openWeatherRestClient.getDirectGeocodingByCityName(CITY) }
                             verify(exactly = 1) {
                                 openWeatherRestClient.getWeatherData(
-                                    mockGetDirectGeocodingResponseDto.lat,
-                                    mockGetDirectGeocodingResponseDto.lon
+                                    mockGetDirectGeocodingResponseDTO.lat,
+                                    mockGetDirectGeocodingResponseDTO.lon
                                 )
                             }
                         }
@@ -83,7 +102,11 @@ internal class AsyncWeatherDataFetcherTest {
 
                         @Test
                         fun `then catch exception and return empty data`() {
+                            every { openWeatherRestClient.getDirectGeocodingByCityName(CITY) } returns Mono.empty()
 
+                            subject.fetchFromOpenWeather(CITY)
+
+                            verify(exactly = 1) { openWeatherRestClient.getDirectGeocodingByCityName(CITY) }
                         }
                     }
                 }
